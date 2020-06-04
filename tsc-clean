@@ -1,0 +1,38 @@
+#!/usr/bin/python3
+# Mel - 2020-06-04
+import os
+import sys
+
+def main():
+    thisfile = sys.argv[1]
+    newfile = thisfile.replace('.csv','') + '_cleaned.csv'
+    multiline = ''
+
+    if not os.path.isfile(thisfile):
+        print(f'Argument: {thisfile} is not a file.')
+        sys.exit()
+
+    nfp = open(newfile,'w')
+    print(f'Cleaning "{thisfile}"\n   -> "{newfile}"')
+
+    with open(thisfile) as fp:
+        for line in fp:
+            if line[0] == '"':
+                if (line.count('"') % 2) == 0:
+                    nfp.write(line)
+                else:
+                    multiline += ' ' + line.rstrip('\n')
+                    multiline = ' '.join(multiline.split())
+                    if (multiline.count('"') % 2) == 0:
+                        nfp.write(multiline)
+                        multiline = ''
+            else:
+                multiline += ' ' + line.rstrip('\n')
+                multiline = ' '.join(multiline.split())
+                if (multiline.count('"') % 2) == 0:
+                    nfp.write(multiline)
+                    multiline = ''
+    nfp.close()
+
+if __name__ == '__main__':
+    main()
